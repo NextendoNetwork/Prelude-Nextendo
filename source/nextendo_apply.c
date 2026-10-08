@@ -223,6 +223,12 @@ char *nextendo_hosts_build(const char *ip) {
     snprintf(line, sizeof(line), "%s *.xboxlive.com\n", ip);                EMIT_H(line);
     snprintf(line, sizeof(line), "%s login.live.com\n", ip);                EMIT_H(line);
 
+    EMIT_H("\n# --- Ultimate Chicken Horse (brainCloud RPC + relais regionaux) ---\n");
+    snprintf(line, sizeof(line), "%s api.braincloudservers.com\n", ip);         EMIT_H(line);
+    snprintf(line, sizeof(line), "%s na.ultimatechickenhorseserver.com\n", ip); EMIT_H(line);
+    snprintf(line, sizeof(line), "%s eu.ultimatechickenhorseserver.com\n", ip); EMIT_H(line);
+    snprintf(line, sizeof(line), "%s ap.ultimatechickenhorseserver.com\n", ip); EMIT_H(line);
+
     EMIT_H("\n# --- 2) NAT-check #2 : IP differente de nncs1 (sinon MK8 test-103) ---\n");
     snprintf(line, sizeof(line), "%s  nncs2-*.n.n.srv.nintendo.net\n", nncs2_ip); EMIT_H(line);
 

@@ -642,7 +642,7 @@
 #define NEXTENDO_VERSION_MINOR 5
 #endif
 #ifndef NEXTENDO_VERSION_PATCH
-#define NEXTENDO_VERSION_PATCH 12
+#define NEXTENDO_VERSION_PATCH 13
 #endif
 
 typedef struct {
