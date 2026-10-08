@@ -57,8 +57,8 @@ One switch to Nextendo mode and these are configured with the proper hosts and p
   lines apply to every game while Nextendo mode is on.
 - **Nintendo Account Link fallback**: targeted `ssl:s` Client-PKI fallback (`network_mitm` v2)
   for blanked PRODINFO / emuMMC consoles, allowing account linking on Nextendo without error `0x167B`.
-- Explicit per-game NEX entries for Mario Tennis Aces, ARMS, Luigi's Mansion 3, Animal Crossing
-  and Strikers, on top of the `g2*` wildcard.
+- Explicit per-game NEX entries for Mario Tennis Aces, ARMS, Luigi's Mansion 3, Animal Crossing,
+  Strikers and Nintendo Switch Sports, on top of the `g2*` wildcard.
 
 ### Privacy & reversibility
 
