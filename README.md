@@ -1,5 +1,7 @@
 # Prelude
 
+**Support the maintainer of Prelude**: [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5W228IFAC)
+
 **Prelude** is the Nintendo Switch homebrew that switches your console between the
 [Nextendo Network](https://nextendo.network) and Nintendo's official servers.
 
