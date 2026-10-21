@@ -11,7 +11,7 @@
 // Required Notice: Copyright 2026 Nextendo Network
 
 // ============================================================
-//  Prelude — internationalisation (EN / ES / PT / FR / ZH).
+//  Prelude — internationalisation (EN / ES / PT / FR / ZH / RU).
 //  Les chaînes sont indexées par StringID. La langue courante
 //  est persistée dans sdmc:/switch/prelude_lang.txt (1 octet).
 // ============================================================
@@ -24,6 +24,7 @@ typedef enum {
     LANG_PT,    // Português
     LANG_FR,    // Français
     LANG_ZH,    // 中文
+    LANG_RU,    // Русский
 } Lang;
 
 typedef enum {
@@ -130,6 +131,7 @@ typedef enum {
     STR_LANG_PT,                // "Português"
     STR_LANG_FR,                // "Français"
     STR_LANG_ZH,                // "中文"
+    STR_LANG_RU,                // "Русский"
     STR_LANG_DEFAULT,           // "(Default)"
     STR_LANG_A_SELECT,          // "A: Select"
     STR_LANG_B_BACK,            // "B: Back"
@@ -210,6 +212,7 @@ typedef enum {
     STR_S3_REINSTALL_SUB,  // sous-titre du bouton
     STR_S3_DONE,           // resultat : ecrits, il faut redemarrer
     STR_PATCH_COUNT_SINGULAR, // "%d patch"
+    STR_PATCH_COUNT_FEW,      // "%d patches" (rus: 2-4 -> "%d патча")
     STR_PATCH_COUNT_PLURAL,   // "%d patches"
     STR_BADGE_ACTIVE,                 // "Active"      pastille du mode courant
     STR_HINT_APPLY,                   // "Apply"       barre de boutons

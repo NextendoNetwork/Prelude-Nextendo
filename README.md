@@ -23,7 +23,7 @@ reboots. Nothing is permanent: you can switch back whenever you want.
 ### A complete settings app
 
 - Follows the console's system theme (HOME menu / Settings look, including light/dark mode).
-- In-app language selection: English, Español, Português, Français, 中文.
+- In-app language selection: English, Español, Português, Français, 中文, Русский.
 - Background music, decoded with mpg123: no SDL2, the `.nro` is ~35% smaller than before.
 - **Self-updating**: checks GitHub releases at launch and can download and replace the `.nro` it is
   running from (any SD path, not just `/switch/`). Stale bundled mods (see below) are detected and
