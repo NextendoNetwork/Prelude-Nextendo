@@ -12,7 +12,7 @@
 
 // ============================================================
 //  Nextendo .nro — rendu UI (style Nimbus/Pretendo).
-//  Framebuffer libnx + texte FreeType (police Poppins, OFL, depuis le romfs)
+//  Framebuffer libnx + texte FreeType (police Montserrat, OFL, depuis le romfs)
 //  + affichage des vraies images (logo Nextendo + icône Switch) en RGBA brut.
 // ============================================================
 #include <string.h>
@@ -35,7 +35,7 @@
 
 static Framebuffer s_fb;
 static FT_Library  s_ft;
-static FT_Face     s_bold, s_semi, s_reg;     // Poppins Bold / SemiBold / Regular
+static FT_Face     s_bold, s_semi, s_reg;     // Montserrat Bold / SemiBold / Regular
 static FT_Face     s_cjk_faces[PlSharedFontType_Total]; // CJK fallback (system shared fonts)
 static int         s_cjk_count;                         // number of loaded fallback faces
 static u8         *s_bBuf, *s_sBuf, *s_rBuf;  // buffers TTF (gardés en vie)
@@ -316,9 +316,9 @@ static u8 *loadImg(const char *path) {
 // ============================================================
 bool ui_init(void) {
     if (FT_Init_FreeType(&s_ft)) return false;
-    if (!loadFace("romfs:/Poppins-Bold.ttf", &s_bold, &s_bBuf)) return false;
-    if (!loadFace("romfs:/Poppins-SemiBold.ttf", &s_semi, &s_sBuf)) s_semi = s_bold;
-    if (!loadFace("romfs:/Poppins-Regular.ttf", &s_reg, &s_rBuf)) s_reg = s_bold;
+    if (!loadFace("romfs:/Montserrat-Bold.ttf", &s_bold, &s_bBuf)) return false;
+    if (!loadFace("romfs:/Montserrat-SemiBold.ttf", &s_semi, &s_sBuf)) s_semi = s_bold;
+    if (!loadFace("romfs:/Montserrat-Regular.ttf", &s_reg, &s_rBuf)) s_reg = s_bold;
 
     // CJK fallback: load ALL system shared fonts for full glyph coverage.
     // Switch splits CJK across multiple font files (Standard, ChineseSimplified,
