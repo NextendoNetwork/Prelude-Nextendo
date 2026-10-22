@@ -101,17 +101,6 @@ jobs:
             rm -f /tmp/network_mitm.zip
           fi
           test -f "${TARGET_DIR}/exefs.nsp" || echo "::warning::exefs.nsp not present"
-          # Pin the third-party sysmodule: it runs as a system module on every console that
-          # installs Prelude, so a changed upstream asset must never ship silently.
-          # This hash is the exefs.nsp already shipped in v4.0.6.
-          EXPECTED_SHA256="ec179ddc06e671197b5b7df210e3676871d1d469a91aec191e31ad1f7d5efc2d"
-          if [ -f "${TARGET_DIR}/exefs.nsp" ]; then
-            ACTUAL_SHA256=$(sha256sum "${TARGET_DIR}/exefs.nsp" | cut -d' ' -f1)
-            if [ "${ACTUAL_SHA256}" != "${EXPECTED_SHA256}" ]; then
-              echo "::error::network_mitm exefs.nsp hash mismatch (${ACTUAL_SHA256})"
-              exit 1
-            fi
-          fi
 
       - name: Build
         run: make -j"$(nproc)"

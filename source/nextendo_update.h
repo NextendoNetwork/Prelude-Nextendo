@@ -659,10 +659,7 @@
 // build 91: v4.0.6. UNO 1.1.17 online: host for the Ubisoft public services sign-in (public-ubiservices.ubi.com).
 //           The Nextendo UNO server answers UNO only and does not forward to Ubisoft, so other Ubisoft titles
 //           cannot go online while Nextendo mode is on.
-// build 92: v4.0.7. Online-play invitations: host for the system invitation service (app.lp1.five.nintendo.net).
-//           It was missing, so inviting a friend from a game reached the real Nintendo server and failed
-//           with 2121-2906. Switch to Switch and Switch to Ryujinx/Citron invitations now go through Nextendo.
-#define NEXTENDO_BUILD 92
+#define NEXTENDO_BUILD 91
 
 // Version SEMVER de CE build. Doit rester alignee avec APP_VERSION (Makefile).
 // Le compare a l'updater se fait en semver complet (maj.min.patch), pas avec
@@ -678,7 +675,7 @@
 #define NEXTENDO_VERSION_MINOR 0
 #endif
 #ifndef NEXTENDO_VERSION_PATCH
-#define NEXTENDO_VERSION_PATCH 7
+#define NEXTENDO_VERSION_PATCH 6
 #endif
 
 typedef struct {

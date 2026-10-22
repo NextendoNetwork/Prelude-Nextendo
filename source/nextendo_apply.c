@@ -158,12 +158,6 @@ char *nextendo_hosts_build(const char *ip) {
     // srv.nintendo.net, donc AUCUN wildcard existant ne le couvre — meme piege que
     // dragons plus bas. Sans cette ligne l'applet part chez le vrai Nintendo.
     snprintf(line, sizeof(line), "%s lp1.nso.nintendo.net\n", ip);                        EMIT_H(line);
-    // app.lp1.five: online-play invitations of the system friends module (010000000000000E):
-    // POST /v2/invitation_groups, the inbox and its unread count. Same trap as lp1.nso: it
-    // ends in .nintendo.net, not srv.nintendo.net, so no wildcard covers it. Without this line
-    // the console sends invitations to the real Nintendo server, which rejects the Nextendo
-    // token with error.code "0006" and the game shows 2121-2906 (friends 0xb2b70, table 0x122808).
-    snprintf(line, sizeof(line), "%s app.lp1.five.nintendo.net\n", ip);                   EMIT_H(line);
     snprintf(line, sizeof(line), "%s t-7b4e32ca-lp1.lp1.t.npln.srv.nintendo.net\n", ip); EMIT_H(line); // N64 Classics
     snprintf(line, sizeof(line), "%s api-lp1.znc.srv.nintendo.net\n", ip);               EMIT_H(line); // N64 Classics
     snprintf(line, sizeof(line), "%s t-4e44e7a0-lp1.lp1.t.npln.srv.nintendo.net\n", ip); EMIT_H(line); // Legends: Z-A

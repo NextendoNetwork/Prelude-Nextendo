@@ -392,7 +392,7 @@ int ui_pane_rows(int railSel, bool ssbuInstalled) {
         case RAIL_S2:   return 2;                        // Splatoon 2 + Splatoon 3
         case RAIL_SMB35: return 2;   // BCAT + batailles speciales
         case RAIL_ACCOUNT: return 1; // Fallback de vinculacion
-        case RAIL_LANG: return 5;                        // EN / ES / PT / FR / ZH
+        case RAIL_LANG: return 6;                        // EN / ES / PT / FR / ZH / IT
         default:        return 1;                        // drapeau : une action
     }
 }
@@ -581,10 +581,13 @@ void ui_draw_picker(int railSel, int paneSel, bool paneFocused, int current,
               lang_str(accountRecommended ? STR_ACCOUNT_REC_YES : STR_ACCOUNT_REC_NO));
         y += FS_CAP + SP_SM;
     } else {
-        static const StringID ids[5] = { STR_LANG_EN, STR_LANG_ES, STR_LANG_PT, STR_LANG_FR, STR_LANG_ZH };
-        for (int i = 0; i < 5; i++) {
+       
+        static const StringID ids[6] = { STR_LANG_EN, STR_LANG_ES, STR_LANG_PT, STR_LANG_FR, STR_LANG_ZH, STR_LANG_IT };
+        for (int i = 0; i < 6; i++) {
             int rowY = y;
+            int oldY = y;
             y = chromeRow(b, st, x, y, w, FOC(i), lang_str(ids[i]), NULL);
+            y = oldY + ROW_H -4 + SP_XS;  // pas de sous-titre, donc on ne veut pas de marge supplementaire
             if (i == (int)g_lang)
                 chromeBadge(b, st, x, rowY, w, lang_str(STR_LANG_DEFAULT),
                             theme_ok(), COL(0xFF,0xFF,0xFF));
