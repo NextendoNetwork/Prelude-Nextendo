@@ -403,7 +403,7 @@ int ui_pane_rows(int railSel, bool ssbuInstalled) {
         case RAIL_S2:   return 2;                        // Splatoon 2 + Splatoon 3
         case RAIL_SMB35: return 2;   // BCAT + batailles speciales
         case RAIL_ACCOUNT: return 1; // Fallback de vinculacion
-        case RAIL_LANG: return 5;                        // EN / ES / PT / FR / ZH
+        case RAIL_LANG: return 6;                        // EN / ES / PT / FR / ZH / IT
         default:        return 1;                        // drapeau : une action
     }
 }
@@ -600,43 +600,43 @@ void ui_draw_picker(int railSel, int paneSel, bool paneFocused, int current,
         y += FS_CAP + SP_SM;
     } else {
        
-       static const StringID ids[] = {
+     static const StringID ids[] = {
 
          STR_LANG_EN,
          STR_LANG_ES,
          STR_LANG_PT,
          STR_LANG_FR,
          STR_LANG_ZH,
-         STR_LANG_IT                 
+         STR_LANG_IT,                 
         };
 
-        const int langCount = sizeof(ids) / sizeof(ids[0]);
-        const int firstY = y;
-        const int rowStep = ROW_H - 4 + SP_XS;
-        const int bottomY = FB_H - FTR_H;
+     const int langCount = sizeof(ids) / sizeof(ids[0]);
+     const int firstY = y;
+     const int rowStep = ROW_H - 4 + SP_XS;
+     const int bottomY = FB_H - FTR_H;
         // Cantidad de filas que entran en el espacio disponible.
-        const int visibleRows = (bottomY - firstY) / rowStep;
+     const int visibleRows = (bottomY - firstY) / rowStep;
         // Desplazamiento: mantener paneSel dentro de las filas visibles.
-        int scroll = 0;
-        if (paneSel >= visibleRows) {
+     int scroll = 0;
+     if (paneSel >= visibleRows) {
             scroll = paneSel - visibleRows + 1;
             }
-        for (int r = 0; r < visibleRows; r++) {
-             int i = scroll + r;
-             if (i >= langCount)
-             break;
+     for (int r = 0; r < visibleRows; r++) {
+         int i = scroll + r;
+         if (i >= langCount)
+         break;
 
-             int rowY = firstY + r * rowStep;
+         int rowY = firstY + r * rowStep;
 
-             chromeRow(b, st, x, rowY, w,
-             FOC(i), lang_str(ids[i]), NULL);
+         chromeRow(b, st, x, rowY, w,
+         FOC(i), lang_str(ids[i]), NULL);
 
 
-             if (i == (int)g_lang) {
-                    chromeBadge(b, st, x, rowY, w,
-                    lang_str(STR_LANG_DEFAULT),
-                    theme_ok(), COL(0xFF, 0xFF, 0xFF));
-                }
+         if (i == (int)g_lang) {
+             chromeBadge(b, st, x, rowY, w,
+              lang_str(STR_LANG_DEFAULT),
+             theme_ok(), COL(0xFF, 0xFF, 0xFF));
+             }
          }
      }
     #undef FOC

@@ -1110,6 +1110,7 @@ void lang_init(void) {
     else if (c == 'P') g_lang = LANG_PT;
     else if (c == 'F') g_lang = LANG_FR;
     else if (c == 'Z') g_lang = LANG_ZH;
+    else if (c == 'I') g_lang = LANG_IT;
     else g_lang = LANG_EN;
 }
 
@@ -1119,6 +1120,7 @@ void lang_save(void) {
     else if (g_lang == LANG_PT) ch = 'P';
     else if (g_lang == LANG_FR) ch = 'F';
     else if (g_lang == LANG_ZH) ch = 'Z';
+    else if (g_lang == LANG_IT) ch = 'I';
     // else LANG_EN -> 'E'
     FILE *f = fopen(LANG_PATH, "wb");
     if (!f) {
