@@ -294,6 +294,8 @@ typedef enum {
     STR_PRODINFO_NOW_ON,              // etat actuel : blanchi
     STR_PRODINFO_NOW_OFF,             // etat actuel : reel
     STR_PRODINFO_HINTS,               // "A: Blank (recommended)   Y: Keep real   B: Cancel"
+    STR_HOST_TITLE,
+    STR_HOST_UPDATED,
     STR_COUNT
 } StringID;
 
