@@ -248,28 +248,40 @@ static void chromeCursor(u32 *b, u32 st, int x, int y, int w, int h) {
 
 // Ligne d'option : surface + titre + sous-titre optionnel. Renvoie le y de la
 // ligne suivante, pour que l'appelant empile sans calculer d'offsets.
-static int chromeRow(u32 *b, u32 st, int x, int y, int w,
-                     bool focused, const char *label, const char *sub) {
-    if (focused) chromeCursor(b, st, x, y, w, ROW_H);
-    roundedCard(b, st, x, y, w, ROW_H, RADIUS, packColor(theme_pane()));
+// La hauteur est un parametre : la liste des langues doit tenir dans le panneau
+// (six entrees x la hauteur standard deborderaient sur la barre de boutons).
+static int chromeRowH(u32 *b, u32 st, int x, int y, int w,
+                       bool focused, const char *label, const char *sub, int h) {
+    if (focused) chromeCursor(b, st, x, y, w, h);
+    roundedCard(b, st, x, y, w, h, RADIUS, packColor(theme_pane()));
     if (sub && sub[0]) {
         drawF(b, st, s_semi, x + SP_MD, y + 34, FS_ITEM, packColor(theme_text()), label);
         drawF(b, st, s_reg,  x + SP_MD, y + 62, FS_CAP,  packColor(theme_text2()), sub);
     } else {
-        drawF(b, st, s_semi, x + SP_MD, y + ROW_H / 2 + FS_ITEM / 3,
+        drawF(b, st, s_semi, x + SP_MD, y + h / 2 + FS_ITEM / 3,
               FS_ITEM, packColor(theme_text()), label);
     }
-    return y + ROW_H + SP_XS;
+    return y + h + SP_XS;
+}
+
+static int chromeRow(u32 *b, u32 st, int x, int y, int w,
+                     bool focused, const char *label, const char *sub) {
+    return chromeRowH(b, st, x, y, w, focused, label, sub, ROW_H);
 }
 
 // Pastille d'etat, alignee a droite d'une ligne.
-static void chromeBadge(u32 *b, u32 st, int rowX, int rowY, int rowW,
-                        const char *text, Color bg, Color fg) {
+static void chromeBadgeH(u32 *b, u32 st, int rowX, int rowY, int rowW, int rowH,
+                          const char *text, Color bg, Color fg) {
     int tw = measureF(s_semi, FS_CAP, text);
     int pw = tw + SP_MD * 2, ph = 34;
-    int px = rowX + rowW - SP_MD - pw, py = rowY + (ROW_H - ph) / 2;
+    int px = rowX + rowW - SP_MD - pw, py = rowY + (rowH - ph) / 2;
     roundedCard(b, st, px, py, pw, ph, ph / 2, packColor(bg));
     drawF(b, st, s_semi, px + SP_MD, py + ph / 2 + FS_CAP / 3, FS_CAP, packColor(fg), text);
+}
+
+static void chromeBadge(u32 *b, u32 st, int rowX, int rowY, int rowW,
+                        const char *text, Color bg, Color fg) {
+    chromeBadgeH(b, st, rowX, rowY, rowW, ROW_H, text, bg, fg);
 }
 
 // Interrupteur systeme : piste + pastille, deux roundedCard. Un booleen se lit
@@ -403,7 +415,7 @@ int ui_pane_rows(int railSel, bool ssbuInstalled) {
         case RAIL_S2:   return 2;                        // Splatoon 2 + Splatoon 3
         case RAIL_SMB35: return 2;   // BCAT + batailles speciales
         case RAIL_ACCOUNT: return 1; // Fallback de vinculacion
-        case RAIL_LANG: return 5;                        // EN / ES / PT / FR / ZH
+        case RAIL_LANG: return 6;                        // EN / ES / PT / FR / ZH / RU
         default:        return 1;                        // drapeau : une action
     }
 }
@@ -426,6 +438,19 @@ static void drawRail(u32 *b, u32 st, int railSel, bool railFocused) {
               packColor(on ? theme_text() : theme_text2()), railLabel(i));
         y += 58;
     }
+}
+
+// Le pluriel n'est pas une regle universelle : le russe a trois formes
+// (1 патч / 2 патча / 5 патчей). C'est la langue qui tranche, pas la
+// grammaire de l'anglais, et le choix se fait sur le nombre seul.
+static StringID patchCountId(int n) {
+    if (g_lang == LANG_RU) {
+        int n10 = n % 10, n100 = n % 100;
+        if (n10 == 1 && n100 != 11) return STR_PATCH_COUNT_SINGULAR;
+        if (n10 >= 2 && n10 <= 4 && !(n100 >= 12 && n100 <= 14)) return STR_PATCH_COUNT_FEW;
+        return STR_PATCH_COUNT_PLURAL;
+    }
+    return n == 1 ? STR_PATCH_COUNT_SINGULAR : STR_PATCH_COUNT_PLURAL;
 }
 
 void ui_draw_picker(int railSel, int paneSel, bool paneFocused, int current,
@@ -543,7 +568,7 @@ void ui_draw_picker(int railSel, int paneSel, bool paneFocused, int current,
                 }
                 char patchStr[32];
                 snprintf(patchStr, sizeof(patchStr),
-                         lang_str(gp->patchCount == 1 ? STR_PATCH_COUNT_SINGULAR : STR_PATCH_COUNT_PLURAL),
+                         lang_str(patchCountId(gp->patchCount)),
                          gp->patchCount);
                 snprintf(ligne, sizeof(ligne), "- %s (%s): %s", gp->gameName, patchStr, folderList);
                 drawF(b, st, s_reg, x, y + FS_CAP, FS_CAP, cInfo, ligne);
@@ -599,14 +624,20 @@ void ui_draw_picker(int railSel, int paneSel, bool paneFocused, int current,
               lang_str(accountRecommended ? STR_ACCOUNT_REC_YES : STR_ACCOUNT_REC_NO));
         y += FS_CAP + SP_SM;
     } else {
-        static const StringID ids[5] = { STR_LANG_EN, STR_LANG_ES, STR_LANG_PT, STR_LANG_FR, STR_LANG_ZH };
-        for (int i = 0; i < 5; i++) {
+        // Six langues : a la hauteur standard (ROW_H), la liste deborderait sur
+        // la barre de boutons. Le panneau ne laisse que 492 px sous l'intitule,
+        // six lignes de 92 en prendraient 552 — d'ou des lignes plus basses.
+        #define LANG_ROW_H 60
+        static const StringID ids[6] = { STR_LANG_EN, STR_LANG_ES, STR_LANG_PT, STR_LANG_FR,
+                                         STR_LANG_ZH, STR_LANG_RU };
+        for (int i = 0; i < 6; i++) {
             int rowY = y;
-            y = chromeRow(b, st, x, y, w, FOC(i), lang_str(ids[i]), NULL);
+            y = chromeRowH(b, st, x, y, w, FOC(i), lang_str(ids[i]), NULL, LANG_ROW_H);
             if (i == (int)g_lang)
-                chromeBadge(b, st, x, rowY, w, lang_str(STR_LANG_DEFAULT),
-                            theme_ok(), COL(0xFF,0xFF,0xFF));
+                chromeBadgeH(b, st, x, rowY, w, LANG_ROW_H, lang_str(STR_LANG_DEFAULT),
+                             theme_ok(), COL(0xFF,0xFF,0xFF));
         }
+        #undef LANG_ROW_H
     }
     #undef FOC
 
