@@ -599,15 +599,46 @@ void ui_draw_picker(int railSel, int paneSel, bool paneFocused, int current,
               lang_str(accountRecommended ? STR_ACCOUNT_REC_YES : STR_ACCOUNT_REC_NO));
         y += FS_CAP + SP_SM;
     } else {
-        static const StringID ids[5] = { STR_LANG_EN, STR_LANG_ES, STR_LANG_PT, STR_LANG_FR, STR_LANG_ZH };
-        for (int i = 0; i < 5; i++) {
-            int rowY = y;
-            y = chromeRow(b, st, x, y, w, FOC(i), lang_str(ids[i]), NULL);
-            if (i == (int)g_lang)
-                chromeBadge(b, st, x, rowY, w, lang_str(STR_LANG_DEFAULT),
-                            theme_ok(), COL(0xFF,0xFF,0xFF));
-        }
-    }
+       
+       static const StringID ids[] = {
+
+         STR_LANG_EN,
+         STR_LANG_ES,
+         STR_LANG_PT,
+         STR_LANG_FR,
+         STR_LANG_ZH,
+         STR_LANG_IT                 
+        };
+
+        const int langCount = sizeof(ids) / sizeof(ids[0]);
+        const int firstY = y;
+        const int rowStep = ROW_H - 4 + SP_XS;
+        const int bottomY = FB_H - FTR_H;
+        // Cantidad de filas que entran en el espacio disponible.
+        const int visibleRows = (bottomY - firstY) / rowStep;
+        // Desplazamiento: mantener paneSel dentro de las filas visibles.
+        int scroll = 0;
+        if (paneSel >= visibleRows) {
+            scroll = paneSel - visibleRows + 1;
+            }
+        for (int r = 0; r < visibleRows; r++) {
+             int i = scroll + r;
+             if (i >= langCount)
+             break;
+
+             int rowY = firstY + r * rowStep;
+
+             chromeRow(b, st, x, rowY, w,
+             FOC(i), lang_str(ids[i]), NULL);
+
+
+             if (i == (int)g_lang) {
+                    chromeBadge(b, st, x, rowY, w,
+                    lang_str(STR_LANG_DEFAULT),
+                    theme_ok(), COL(0xFF, 0xFF, 0xFF));
+                }
+         }
+     }
     #undef FOC
 
     if (status && status[0])
