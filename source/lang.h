@@ -24,6 +24,7 @@ typedef enum {
     LANG_PT,    // Português
     LANG_FR,    // Français
     LANG_ZH,    // 中文
+    LANG_IT,    // Italiano
 } Lang;
 
 typedef enum {
@@ -130,6 +131,7 @@ typedef enum {
     STR_LANG_PT,                // "Português"
     STR_LANG_FR,                // "Français"
     STR_LANG_ZH,                // "中文"
+    STR_LANG_IT,                // "Italiano"
     STR_LANG_DEFAULT,           // "(Default)"
     STR_LANG_A_SELECT,          // "A: Select"
     STR_LANG_B_BACK,            // "B: Back"
@@ -292,6 +294,8 @@ typedef enum {
     STR_PRODINFO_NOW_ON,              // etat actuel : blanchi
     STR_PRODINFO_NOW_OFF,             // etat actuel : reel
     STR_PRODINFO_HINTS,               // "A: Blank (recommended)   Y: Keep real   B: Cancel"
+    STR_HOST_TITLE,
+    STR_HOST_UPDATED,
     STR_COUNT
 } StringID;
 
