@@ -162,6 +162,11 @@ char *nextendo_hosts_build(const char *ip) {
     // srv.nintendo.net, donc AUCUN wildcard existant ne le couvre — meme piege que
     // dragons plus bas. Sans cette ligne l'applet part chez le vrai Nintendo.
     snprintf(line, sizeof(line), "%s lp1.nso.nintendo.net\n", ip);                        EMIT_H(line);
+    // NSO mission-event uploads are separate from the applet and friends API.
+    // No verified Nextendo mission-event handler is configured here. Block only
+    // this host so reports cannot fall through to the official service; do not
+    // widen this to *.nso.nintendo.net, which would also affect the NSO applet.
+    EMIT_H("127.0.0.1 fw-api.lp1.nso.nintendo.net\n");
     // app.lp1.five: online-play invitations of the system friends module (010000000000000E):
     // POST /v2/invitation_groups, the inbox and its unread count. Same trap as lp1.nso: it
     // ends in .nintendo.net, not srv.nintendo.net, so no wildcard covers it. Without this line
