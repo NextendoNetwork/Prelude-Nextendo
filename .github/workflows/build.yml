@@ -41,6 +41,7 @@ jobs:
           /tmp/test-http
           python3 tools/test_config_editors.py
           python3 tools/test_download_stream.py
+          python3 tools/test_mission_event_dns.py
 
   build:
     needs: updater-tests
