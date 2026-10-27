@@ -50,6 +50,7 @@ jobs:
           cc -std=c11 -Wall -Wextra -Werror tools/test_prodinfo_flags.c -o /tmp/test-prodinfo-flags
           /tmp/test-prodinfo-flags
           python3 tools/test_download_stream.py
+          python3 tools/test_mission_event_dns.py
 
   build:
     needs: updater-tests

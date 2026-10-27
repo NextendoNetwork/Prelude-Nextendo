@@ -92,12 +92,22 @@ One switch to Nextendo mode and these are configured with the proper hosts and p
 
 ### Privacy & reversibility
 
-- Telemetry blocked **in both modes** (Atmosphère's native defaults are merged, not replaced).
+- Nextendo mode redirects the configured telemetry hosts to Nextendo's sink. Nintendo mode
+  enables Atmosphère's telemetry defaults and adds Prelude's Nintendo-domain block.
 - Nintendo mode removes the whole certificate-trust stack (CA bundle, `disable_ca_verification`,
   `rootCA.pem`) and purges the logs that could leak the server IP: no `.bak`, no debug logs.
-- PRODINFO handled per mode: real device certificate under Nextendo (confined by DNS.mitm),
-  blanked identity under Nintendo on emuMMC, never touched on sysNAND; and the UI tells you
-  plainly what that means for your console type.
+- Nextendo mode disables `blank_prodinfo_emummc`, so the real device certificate and serial
+  are visible after reboot. The normal Nintendo-mode action enables it on emuMMC; an explicit
+  user choice can retain the real identity. Prelude leaves `blank_prodinfo_sysmmc` unchanged.
+- Nextendo activation aborts before changing the emuMMC identity setting if preparing or
+  committing the DNS configuration fails. This is an SD-write check, not a runtime network test.
+- DNS redirection is **not complete network isolation**: unmatched names use normal DNS,
+  and a manual proxy or a client using an IP directly can take another path. Neither mode nor
+  serial blanking guarantees protection against Nintendo bans. Atmosphère also warns that
+  identity data may be cached elsewhere ([PRODINFO settings](https://github.com/Atmosphere-NX/Atmosphere/blob/master/config_templates/exosphere.ini)).
+- Firmware 23.x needs the DNS interception support introduced in
+  [Atmosphère 1.12.1](https://github.com/Atmosphere-NX/Atmosphere/releases/tag/1.12.1).
+  Prelude does not install that Atmosphère update.
 - Your own `hosts` files are offered a one-time backup before Prelude writes over them.
 - **Updating Prelude keeps your hosts current.** When you start Prelude with Nextendo mode already on,
   a `hosts` file that carries Prelude's signature but differs from what this version writes (for example

@@ -45,7 +45,8 @@ static bool fileExists(const char*p){return get(p)!=NULL;}
 static bool fileHas(const char*p,const char*n){return get(p)&&strstr(get(p),n);}
 static bool prelude_read_config(const char*p,char**t,size_t*n){const char*s=get(p);*t=s?strdup(s):NULL;*n=s?strlen(s):0;return true;}
 static bool writeTextFile(const char*p,const char*t){put(p,t);return true;}
-static bool commitConfig(void){return true;}
+static bool configCommitFail, dnsSettingsFail;
+static bool commitConfig(void){return !configCommitFail;}
 static bool modeConfigReadable(void){return true;}
 static int ensureDir(const char*p){(void)p;return 0;}
 static void nextendo_trace(const char*p){(void)p;}
@@ -76,7 +77,7 @@ static bool prelude_remove_resource(const char *path){
 bool nextendo_account_link_remove(void);
 static int prodinfoWrites;
 static bool iniSetBlankProdinfoEmummc(bool b){(void)b;prodinfoWrites++;return true;}
-static bool iniSetDnsMitm(bool a,bool b){(void)a;(void)b;return true;}
+static bool iniSetDnsMitm(bool a,bool b){(void)a;(void)b;return !dnsSettingsFail;}
 static bool nextendo_backup_use_for_nintendo(void){return true;}
 static bool captureFlagPresent(void){return false;}
 static bool capturePatchesPresent(void){return false;}
@@ -97,6 +98,13 @@ def definition(name,decl):
  return source[start:p]
 main=r'''
 int main(void){
+ // An unsuccessful transition must not attempt to disable identity blanking.
+ // In particular, returning false only after writing exosphere is too late.
+ boot=BOOT_EMUMMC;prodinfoWrites=0;dnsSettingsFail=true;
+ assert(!nextendo_apply_nextendo_ip(NEXTENDO_SERVER_IP_DEFAULT));assert(prodinfoWrites==0);
+ dnsSettingsFail=false;configCommitFail=true;
+ assert(!nextendo_apply_nextendo_ip(NEXTENDO_SERVER_IP_DEFAULT));assert(prodinfoWrites==0);
+ configCommitFail=false;
  put(NEXTENDO_EXOSPHERE_INI,"[exosphere]\nblank_prodinfo_sysmmc=1\nblank_prodinfo_emummc=0\n");
  boot=BOOT_EMUMMC;assert(!nextendo_account_link_is_recommended());
  boot=BOOT_SYSMMC;assert(nextendo_account_link_is_recommended());

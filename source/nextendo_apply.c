@@ -163,6 +163,11 @@ char *nextendo_hosts_build(const char *ip) {
     // srv.nintendo.net, donc AUCUN wildcard existant ne le couvre — meme piege que
     // dragons plus bas. Sans cette ligne l'applet part chez le vrai Nintendo.
     snprintf(line, sizeof(line), "%s lp1.nso.nintendo.net\n", ip);                        EMIT_H(line);
+    // NSO mission-event uploads are separate from the applet and friends API.
+    // No verified Nextendo mission-event handler is configured here. Block only
+    // this host so reports cannot fall through to the official service; do not
+    // widen this to *.nso.nintendo.net, which would also affect the NSO applet.
+    EMIT_H("127.0.0.1 fw-api.lp1.nso.nintendo.net\n");
     // app.lp1.five: online-play invitations of the system friends module (010000000000000E):
     // POST /v2/invitation_groups, the inbox and its unread count. Same trap as lp1.nso: it
     // ends in .nintendo.net, not srv.nintendo.net, so no wildcard covers it. Without this line
@@ -428,9 +433,9 @@ static bool iniSetDnsMitm(bool enable, bool addDefaults) {
 
 // --- Edite exosphere.ini : blank_prodinfo_emummc a 0 (mode NEXTENDO : le vrai PRODINFO est servi
 //     a l'emuMMC -> cert device valide -> plus de 2123-0011, l'auth compte/online marche ; c'est
-//     confine par le DNS-MITM donc l'identite reelle ne fuit JAMAIS vers Nintendo = safe) ou a 1
-//     (mode NINTENDO : PRODINFO blanchi -> si l'utilisateur va sur le VRAI Nintendo en emuMMC,
-//     il presente une identite blanche = pas de ban de la vraie console). Lu par exosphere au
+//     DNS redirection is not a firewall or a guarantee against Nintendo bans.) ou a 1
+//     (mode NINTENDO : PRODINFO blanchi, sans garantie contre un ban ; des identifiants
+//     peuvent aussi etre conserves ailleurs dans le systeme). Lu par exosphere au
 //     BOOT ; le reboot du .nro l'applique. N'affecte QUE les boots emuMMC (blank_prodinfo_sysmmc
 //     n'est jamais touche -> le sysNAND garde son vrai PRODINFO). ---
 static bool iniSetBlankProdinfoEmummc(bool blank) {
@@ -1162,6 +1167,13 @@ bool nextendo_apply_nextendo_ip(const char *ip) {
     // c'est seulement la source du blocage qui change. En mode NINTENDO, add_defaults
     // reste a 1 : nos lignes sont parties, la table native reprend le relais.
     bool i = iniSetDnsMitm(true, false);
+    // Do not relax identity blanking after a failed DNS/settings write. Hosts
+    // and settings must be committed before the separate exosphere update.
+    // This checks SD preparation, not the running DNS interceptor or all egress.
+    if (!i || !commitConfig()) {
+        nextendo_trace("mode: DNS configuration not durable; PRODINFO unchanged");
+        return false;
+    }
     bool p = nextendo_detect_boot() != BOOT_EMUMMC || iniSetBlankProdinfoEmummc(false);
     if (!p) nextendo_trace("29 WARN: iniSetBlankProdinfoEmummc(false) a echoue -> risque 2123-0011");
     nextendo_purge_leaks();
