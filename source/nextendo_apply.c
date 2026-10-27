@@ -1845,7 +1845,7 @@ bool nextendo_account_link_remove(void) {
     bool ok = true;
     const char *files[] = {ACCOUNT_LINK_BOOTFLAG, ACCOUNT_LINK_DIR "/mitm.lst", ACCOUNT_LINK_DIR "/exefs.nsp"};
     for (unsigned i=0; i<sizeof(files)/sizeof(files[0]); ++i) {
-        if (remove(files[i]) != 0 && errno != ENOENT) ok = false;
+        if (!prelude_remove_resource(files[i])) ok = false;
         if (fileExists(files[i])) ok = false;
     }
     rmdir(ACCOUNT_LINK_FLAGS);

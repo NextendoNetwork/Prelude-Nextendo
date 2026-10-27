@@ -65,6 +65,14 @@ static int fakeRemove(const char *path){
 static int fakeRmdir(const char *path){(void)path;return 0;}
 #define remove fakeRemove
 #define rmdir fakeRmdir
+static bool prelude_remove_resource(const char *path){
+ const char *suffixes[]={"",".prelude-new",".prelude-backup"};bool ok=true;
+ for(unsigned i=0;i<3;i++){
+  char item[1024];snprintf(item,sizeof(item),"%s%s",path,suffixes[i]);
+  if(fakeRemove(item)!=0&&errno!=ENOENT)ok=false;
+ }
+ return ok;
+}
 bool nextendo_account_link_remove(void);
 static int prodinfoWrites;
 static bool iniSetBlankProdinfoEmummc(bool b){(void)b;prodinfoWrites++;return true;}
@@ -118,7 +126,11 @@ int main(void){
  const char *identity="[exosphere]\nblank_prodinfo_sysmmc=1\nblank_prodinfo_emummc=1\n";
  put("sdmc:/exosphere.ini",identity);
  put(ACCOUNT_LINK_BOOTFLAG,"flag");put(ACCOUNT_LINK_DIR "/mitm.lst","ssl");put(ACCOUNT_LINK_DIR "/exefs.nsp","synthetic");
+ put(ACCOUNT_LINK_DIR "/exefs.nsp.prelude-backup","old synthetic");
+ put(ACCOUNT_LINK_DIR "/mitm.lst.prelude-new","staged synthetic");
  assert(nextendo_account_link_remove());assert(!fileExists(ACCOUNT_LINK_BOOTFLAG));
+ assert(!fileExists(ACCOUNT_LINK_DIR "/exefs.nsp.prelude-backup"));
+ assert(!fileExists(ACCOUNT_LINK_DIR "/mitm.lst.prelude-new"));
  assert(!strcmp(get("sdmc:/exosphere.ini"),identity));
  put(ACCOUNT_LINK_BOOTFLAG,"flag");cleanupFails=true;
  assert(!nextendo_account_link_remove());assert(!strcmp(get("sdmc:/exosphere.ini"),identity));
