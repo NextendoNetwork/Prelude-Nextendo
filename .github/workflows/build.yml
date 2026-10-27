@@ -47,6 +47,7 @@ jobs:
           python3 tools/test_mode_isolation.py
           python3 tools/test_nintendo_dns_block.py
           python3 tools/test_ggst_hosts.py
+          python3 tools/test_gang_beasts_containment.py
           cc -std=c11 -Wall -Wextra -Werror tools/test_prodinfo_flags.c -o /tmp/test-prodinfo-flags
           /tmp/test-prodinfo-flags
           python3 tools/test_download_stream.py
