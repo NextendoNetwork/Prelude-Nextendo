@@ -209,7 +209,7 @@ typedef enum {
     STR_S3_REINSTALL,      // bouton : les reposer alors qu'ils sont deja la
     STR_S3_REINSTALL_SUB,  // sous-titre du bouton
     STR_S3_DONE,           // resultat : ecrits, il faut redemarrer
-    STR_S3_CURRENT,        // identical resources: no rewrite or reboot
+    STR_S3_CURRENT,        // identical resources: no rewrite, still offer reboot
     STR_PATCH_COUNT_SINGULAR, // "%d patch"
     STR_PATCH_COUNT_PLURAL,   // "%d patches"
     STR_BADGE_ACTIVE,                 // "Active"      pastille du mode courant

@@ -23,17 +23,21 @@ game/firmware build or validating its patches.
 ## Candidate
 
 - Compare binary bytes first; identical resources require no write, rename or
-  commit and the UI reports that nothing changed.
+  commit. The manual action still offers reboot: matching SD files do not prove
+  those patches were loaded before this boot.
 - Stage changed resources separately, commit and read them back before replacing
   the installed file. Preserve the old version as `.prelude-backup`; recover an
   interrupted old-to-backup rename on a subsequent attempt.
+- The Nintendo-mode managed-tree cleanup removes each known resource's
+  `.prelude-new` and `.prelude-backup` siblings as well. Empty managed directories
+  can then be removed; unrelated user files and backups remain untouched.
 - Read, write, close, rename and commit failures return failure; rollback is
   attempted after promotion failures. If the storage also rejects rollback, the
   recovery sibling remains necessary. This is per-file recovery, not an atomic
   transaction across the whole resource tree or a guarantee against SD failure.
-- Request reboot through an explicit result screen when provisioning changed
-  resources, on startup or after the manual button. Preserve that pending screen
-  through the initial hosts-backup questions.
+- Request reboot through an explicit result screen on startup when resources
+  changed, and after every successful manual reinstall, even with identical files.
+  Preserve a pending startup reboot through the initial hosts-backup questions.
 - Keep mode, server selection, DNS policy, resource payloads and identity policy
   unchanged. The existing PR #92 remains a separate security change.
 
@@ -49,6 +53,10 @@ preservation on injected read/write/close/rename/commit failures, staged readbac
 corruption, recovery after interrupted rename, missing sources, initial install,
 empty boot flags and multi-chunk binary resources containing NUL bytes.
 
+`tools/test_resource_cleanup.py` compiles the actual recursive managed-tree
+cleanup and checks removal of backup/staging siblings and empty directories,
+including backup-only and repeated cleanup, while retaining unrelated user files.
+
 Existing mode/INI/DNS/GGST regressions are run separately. No failing-storage
 injection is performed on a console. No payload, firmware patch or release
 version is changed by this candidate.
@@ -58,8 +66,8 @@ version is changed by this candidate.
 1. Back up a known working SD configuration. Record firmware, Atmosphère,
    Prelude version, selected mode, game version and actual connection error.
 2. With already matching resources, run the candidate's reinstall action:
-   verify the unchanged message and matching resource hashes, then test the
-   previously working game and NSO/friends.
+   verify matching resource hashes and that reboot is offered despite no rewrite.
+   Reboot, then test the previously working game and NSO/friends.
 3. Offline, remove one known managed game patch from the test copy only; reopen
    the candidate. Verify it restores that resource and requests a reboot.
    Reboot before checking online functionality.

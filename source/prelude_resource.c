@@ -30,6 +30,21 @@ static int resource_exists(const char *path) {
     return errno == ENOENT ? 0 : -1;
 }
 
+bool prelude_remove_resource(const char *destination) {
+    const char *suffixes[] = { "", ".prelude-new", ".prelude-backup" };
+    bool ok = true;
+    for (size_t i = 0; i < sizeof(suffixes) / sizeof(suffixes[0]); ++i) {
+        char path[1024];
+        if (snprintf(path, sizeof(path), "%s%s", destination, suffixes[i]) >= (int)sizeof(path)) {
+            ok = false;
+            continue;
+        }
+        int exists = resource_exists(path);
+        if (exists < 0 || (exists && remove(path))) ok = false;
+    }
+    return ok;
+}
+
 int prelude_copy_resource(const char *source, const char *destination, bool (*commit)(void)) {
     char staged[1024], backup[1024];
     if (snprintf(staged, sizeof(staged), "%s.prelude-new", destination) >= (int)sizeof(staged) ||

@@ -619,7 +619,7 @@ static bool removeTreeRomfs(const char *srcDir, const char *dstDir) {
             if (!removeTreeRomfs(sp, dp)) ok = false;
             rmdir(dp);                  // vide seulement -> sinon conserve
         } else {
-            if (remove(dp) != 0 && errno != ENOENT) ok = false;
+            if (!prelude_remove_resource(dp)) ok = false;
         }
     }
     closedir(d);

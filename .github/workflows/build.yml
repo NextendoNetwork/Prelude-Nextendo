@@ -39,6 +39,8 @@ jobs:
           /tmp/test-config-io
           cc -std=c11 -Wall -Wextra -Werror tools/test_resource_copy.c -o /tmp/test-resource-copy
           /tmp/test-resource-copy
+          python3 tools/test_resource_cleanup.py
+          python3 tools/test_reinstall_action.py
           cc -std=c11 -Wall -Wextra -Werror tools/test_http.c source/prelude_http.c -o /tmp/test-http
           /tmp/test-http
           python3 tools/test_config_editors.py
