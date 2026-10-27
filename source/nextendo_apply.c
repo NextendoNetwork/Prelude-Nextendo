@@ -34,6 +34,7 @@
 
 #include "nextendo_apply.h"
 #include "prelude_io.h"
+#include "prelude_resource.h"
 #include "prelude_dns_block.h"
 #include "prelude_prodinfo.h"
 #include "nextendo_news.h"
@@ -567,19 +568,11 @@ BootType nextendo_detect_boot(void) {
 }
 
 // --- Copie fichier (romfs -> SD) ---
+static bool s_resources_changed;
 static bool copyFile(const char *src, const char *dst) {
-    FILE *in = fopen(src, "rb");
-    if (!in) return false;
-    FILE *out = fopen(dst, "wb");
-    if (!out) { fclose(in); return false; }
-    static char cbuf[16384];
-    size_t n; bool ok = true;
-    while ((n = fread(cbuf, 1, sizeof(cbuf), in)) > 0)
-        if (fwrite(cbuf, 1, n, out) != n) { ok = false; break; }
-    if (ferror(in)) ok = false;
-    if (fclose(in) != 0) ok = false;
-    if (fclose(out) != 0) ok = false;
-    return ok;
+    int result = prelude_copy_resource(src, dst, commitConfig);
+    if (result == PRELUDE_COPY_UPDATED) s_resources_changed = true;
+    return result != PRELUDE_COPY_FAILED;
 }
 
 // --- Copie recursive romfs -> SD (miroir de l'arbo). Ecrase (patches gates par build-id,
@@ -775,6 +768,7 @@ static int nextendo_purge_stale(void) {
 }
 
 static bool nextendo_provision_all(void) {
+    s_resources_changed = false;
     nextendo_trace("provision: begin SD resources");
     nextendo_purge_stale();
     if (!copyTreeRomfs("romfs:/sd", "sdmc:")) {
@@ -1027,6 +1021,7 @@ static int countIps(const char *dir) {
 // Enveloppe publique : provision_all est interne, mais le demarrage doit pouvoir
 // rafraichir la carte sans passer par une bascule de mode complete.
 bool nextendo_provision_all_public(void) { return nextendo_provision_all(); }
+bool nextendo_provision_changed(void) { return s_resources_changed; }
 
 void nextendo_s3_status(NextendoS3Status *out) {
     if (!out) return;

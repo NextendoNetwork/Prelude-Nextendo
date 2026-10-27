@@ -133,6 +133,8 @@ typedef struct {
 
 void nextendo_s3_status(NextendoS3Status *out);
 bool nextendo_provision_all_public(void);
+// Whether the last provision actually changed resource bytes on SD.
+bool nextendo_provision_changed(void);
 
 // Au demarrage, quand le mode Nextendo est deja actif : remet les hosts de la carte au contenu de CETTE version
 // de Prelude s'ils sont a nous (signature Nextendo) et different. Renvoie le nombre de fichiers reecrits (0 =

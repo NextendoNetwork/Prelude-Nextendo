@@ -55,7 +55,7 @@ enum {
     SCREEN_FLAG_MENU, SCREEN_FLAG_PROGRESS, SCREEN_FLAG_RESULT,
     SCREEN_BACKUP_ASK, SCREEN_USEBAK_ASK,
     SCREEN_MODS_ASK, SCREEN_ACCOUNT_WARN,
-    SCREEN_NEWS_REBOOT,
+    SCREEN_NEWS_REBOOT, SCREEN_PATCHES_REBOOT,
     SCREEN_CAPTURE_WARN, SCREEN_CAPTURE_ACTIVE,   // mode CAPTURE (cache)
     SCREEN_PRODINFO_ASK,                          // mode NINTENDO en emuMMC : PRODINFO
     // Smash et Langue ne sont plus des ecrans : leur contenu vit dans le
@@ -421,6 +421,9 @@ int main(int argc, char **argv) {
     int  paneSel = 0;           // ligne du panneau
     bool paneFocus = false;     // false = les fleches agissent sur le rail
     int  screen = (newsRedemarrer || hostsRafraichis > 0) ? SCREEN_NEWS_REBOOT : SCREEN_PICKER;
+    if (screen == SCREEN_PICKER && current == CHOICE_NEXTENDO && provisionOk && nextendo_provision_changed())
+        screen = SCREEN_PATCHES_REBOOT;
+    int afterBackupScreen = screen;
     // UNE SEULE FOIS, au tout premier lancement : on propose de sauvegarder les hosts
     // dns.mitm que l'utilisateur avait AVANT nous. C'est la SEULE occasion de le faire —
     // des qu'un mode est applique, les fichiers d'origine sont ecrases et il n'y a plus
@@ -616,7 +619,10 @@ int main(int argc, char **argv) {
                             if (current == CHOICE_NEXTENDO) {
                                 bool provisioned = nextendo_provision_all_public();
                                 nextendo_s3_status(&s3);   // relire : le panneau doit refleter la carte
-                                snprintf(status, sizeof(status), "%s", lang_str(provisioned ? STR_S3_DONE : STR_STATUS_SD_ERROR));
+                                if (provisioned && nextendo_provision_changed())
+                                    screen = SCREEN_PATCHES_REBOOT;
+                                snprintf(status, sizeof(status), "%s", lang_str(!provisioned ? STR_STATUS_SD_ERROR :
+                                         nextendo_provision_changed() ? STR_S3_DONE : STR_S3_CURRENT));
                             }
                             break;
                         case RAIL_S2:
@@ -787,6 +793,15 @@ int main(int argc, char **argv) {
                                  lang_str(STR_MODS_BODY1),
                                  lang_str(STR_MODS_BODY2));
 
+        } else if (screen == SCREEN_PATCHES_REBOOT) {
+            ui_draw_result(lang_str(STR_S3_TITLE), lang_str(STR_S3_DONE), true);
+            if (k & HidNpadButton_A) {
+                audio_exit();
+                nextendo_reboot();
+                snprintf(status, sizeof(status), "%s", lang_str(STR_STATUS_REBOOT_FAIL));
+                screen = SCREEN_PICKER;
+            }
+
         } else if (screen == SCREEN_NEWS_REBOOT) {
             // Redemarrage obligatoire : le patch du module bcat et les hosts ne se chargent qu'au demarrage.
             if (hostsRafraichis > 0)
@@ -893,11 +908,11 @@ int main(int argc, char **argv) {
                     screen = SCREEN_USEBAK_ASK;
                 } else {
                     nextendo_backup_prompt_done();
-                    screen = SCREEN_PICKER;
+                    screen = afterBackupScreen;
                 }
             } else if (k & (HidNpadButton_B | HidNpadButton_Plus)) {
                 nextendo_backup_prompt_done();
-                screen = SCREEN_PICKER;
+                screen = afterBackupScreen;
             }
             if (screen == SCREEN_BACKUP_ASK)
                 ui_draw_question(lang_str(STR_BACKUP_TITLE),
@@ -908,7 +923,7 @@ int main(int argc, char **argv) {
             if (k & (HidNpadButton_A | HidNpadButton_B | HidNpadButton_Plus)) {
                 nextendo_backup_set_use_for_nintendo((k & HidNpadButton_A) != 0);
                 nextendo_backup_prompt_done();
-                screen = SCREEN_PICKER;
+                screen = afterBackupScreen;
             }
             if (screen == SCREEN_USEBAK_ASK)
                 ui_draw_question(lang_str(STR_USEBAK_TITLE),
