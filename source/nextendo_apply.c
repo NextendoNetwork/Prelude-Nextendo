@@ -256,6 +256,21 @@ char *nextendo_hosts_build(const char *ip) {
     snprintf(line, sizeof(line), "%s eu.ultimatechickenhorseserver.com\n", ip); EMIT_H(line);
     snprintf(line, sizeof(line), "%s ap.ultimatechickenhorseserver.com\n", ip); EMIT_H(line);
 
+    // Gang Beasts 1.28.1 uses Unity services, not the UCH brainCloud route.
+    // No Nextendo gameplay backend exists yet: keep these requests local rather
+    // than silently letting them reach the original public matchmaking/relay.
+    // DNS-MITM is global: these shared Unity services are blocked for all titles
+    // while Nextendo mode is active. Do not advertise this as playable support.
+    EMIT_H("\n# --- Gang Beasts: public Unity services blocked pending Nextendo backend ---\n");
+    EMIT_H("127.0.0.1 *.services.api.unity.com\n");
+    EMIT_H("127.0.0.1 player-auth.services.api.unity.com\n");
+    EMIT_H("127.0.0.1 lobby.services.api.unity.com\n");
+    EMIT_H("127.0.0.1 relay-allocations.services.api.unity.com\n");
+    EMIT_H("127.0.0.1 qos-discovery.services.api.unity.com\n");
+    EMIT_H("127.0.0.1 multiplay.services.api.unity.com\n");
+    EMIT_H("127.0.0.1 matchmaker.services.api.unity.com\n");
+    EMIT_H("127.0.0.1 wire.unity3d.com\n");
+
     EMIT_H("\n# --- Dragon Ball FighterZ (API Bandai Namco, avant tout trafic NEX) ---\n");
     snprintf(line, sizeof(line), "%s dbf.channel.or.jp\n", ip);                 EMIT_H(line);
 
