@@ -1099,7 +1099,7 @@ static const char *s_strings[STR_COUNT][7] = {
         "Nao foi possivel verificar o ajuste de identidade salvo.",
         "Le reglage d identite enregistre ne peut pas etre verifie.",
         "无法验证已保存的身份设置。",
-        "Saved identity setting cannot be verified.",
+        "Impostazioni identità salvate non verificabili.",
         "Saved identity setting cannot be verified." },
     [STR_PRODINFO_HINTS]     = { "A: Blank      Y: Keep real      B: Cancel",
                                  "A: Blanquear      Y: Mantener real      B: Cancelar",
