@@ -256,6 +256,12 @@ char *nextendo_hosts_build(const char *ip) {
     snprintf(line, sizeof(line), "%s eu.ultimatechickenhorseserver.com\n", ip); EMIT_H(line);
     snprintf(line, sizeof(line), "%s ap.ultimatechickenhorseserver.com\n", ip); EMIT_H(line);
 
+    // Shared brainCloud login is already routed above. Photon replies advertise
+    // Nextendo's own master/game endpoints; never fall back to public Photon.
+    EMIT_H("\n# --- SpeedRunners 2 (independent Nextendo matchmaking/gameplay) ---\n");
+    snprintf(line, sizeof(line), "%s ns.photonengine.io\n", ip); EMIT_H(line);
+    snprintf(line, sizeof(line), "%s api.gameanalytics.com\n", ip); EMIT_H(line);
+
     EMIT_H("\n# --- Dragon Ball FighterZ (API Bandai Namco, avant tout trafic NEX) ---\n");
     snprintf(line, sizeof(line), "%s dbf.channel.or.jp\n", ip);                 EMIT_H(line);
 
