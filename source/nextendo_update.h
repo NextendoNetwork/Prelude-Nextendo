@@ -679,7 +679,9 @@
 // build 101: v4.0.16. Minecraft Dungeons II host patch ported to the 1.1.3.0 update
 // (dungeons2-nextendo/C6B32F4D3D4243FF190B082B4F6AEA18.ips); the 1.1.1.0 patch is retired.
 // build 102: v4.0.17. Terraria 4.5.6: ExeFS patches (terraria-nextendo/).
-#define NEXTENDO_BUILD 102
+// build 103: v4.0.18. Sonic Racing: CrossWorlds hosts (prod-api/prod-cdn.sora-online.net,
+// turn.rtcp.on.epicgames.com).
+#define NEXTENDO_BUILD 103
 
 // Version SEMVER de CE build. Doit rester alignee avec APP_VERSION (Makefile).
 // Le compare a l'updater se fait en semver complet (maj.min.patch), pas avec
@@ -695,7 +697,7 @@
 #define NEXTENDO_VERSION_MINOR 0
 #endif
 #ifndef NEXTENDO_VERSION_PATCH
-#define NEXTENDO_VERSION_PATCH 17
+#define NEXTENDO_VERSION_PATCH 18
 #endif
 
 typedef struct {

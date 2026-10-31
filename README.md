@@ -65,6 +65,9 @@ One switch to Nextendo mode and these are configured with the proper hosts and p
   `wwzprod.wwzapi.com`, `rlx.hydrapi.net`, `rlxp1a1l.hydrapi.net`). No ExeFS patches required.
 - **Guilty Gear -Strive- Nintendo Switch Edition**: Arc System Works API and matchmaking hosts,
   plus the existing shared Epic Online Services redirect, for testing the Nextendo GGST backend.
+- **Sonic Racing: CrossWorlds**: SEGA's API and CDN (`prod-api.sora-online.net`, `prod-cdn.sora-online.net`) and
+  Epic's TURN relay (`turn.rtcp.on.epicgames.com`), plus the shared Epic Online Services redirect. The console
+  signs in with its linked Nextendo account. No ExeFS patches required.
 - **Among Us** (2026.19.0 and 2026.18.0): hosts for the Epic Online Services login, the Innersloth account and the
   three matchmakers, plus ExeFS patches (`amongus_no_dtls/`, one file per game version) that make the game use
   plain UDP, because its DTLS only accepts a certificate held by Innersloth. A patched game cannot play on

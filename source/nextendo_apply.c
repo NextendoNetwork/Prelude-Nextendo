@@ -278,6 +278,14 @@ char *nextendo_hosts_build(const char *ip) {
     snprintf(line, sizeof(line), "%s prod-switch-match-ggst-game.guiltygear.com\n", ip); EMIT_H(line);
     snprintf(line, sizeof(line), "%s prod-to3match-ggst-game.guiltygear.com\n", ip);     EMIT_H(line);
 
+    EMIT_H("\n# --- Sonic Racing: CrossWorlds (SEGA API/CDN + Epic TURN relay) ---\n");
+    // EOS sign-in, lobbies and messaging use the shared api.epicgames.dev entry above. EOS P2P takes
+    // its relay credentials from our server, so Epic's TURN host must be ours too (it is global here,
+    // like every hosts line: other EOS games' relays also reach the Nextendo TURN server).
+    snprintf(line, sizeof(line), "%s prod-api.sora-online.net\n", ip);          EMIT_H(line);
+    snprintf(line, sizeof(line), "%s prod-cdn.sora-online.net\n", ip);          EMIT_H(line);
+    snprintf(line, sizeof(line), "%s turn.rtcp.on.epicgames.com\n", ip);        EMIT_H(line);
+
     EMIT_H("\n# --- UNO / Just Dance 2022 (Ubisoft services, routed by application) ---\n");
     // The shared REST frontend selects JD2022 by its application ID and preserves UNO.
     snprintf(line, sizeof(line), "%s public-ubiservices.ubi.com\n", ip);       EMIT_H(line);
